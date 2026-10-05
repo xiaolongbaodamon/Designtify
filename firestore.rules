@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidProject(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.title is string && data.title.size() <= 200
+        && data.width is number && data.width > 0 && data.width <= 10000
+        && data.height is number && data.height > 0 && data.height <= 10000
+        && data.ownerId is string && data.ownerId.size() <= 128;
+    }
+
+    function isValidComment(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.x is number
+        && data.y is number
+        && data.text is string && data.text.size() <= 1000;
+    }
+
+    // Projects collection
+    match /projects/{projectId} {
+      allow get: if isValidId(projectId);
+      allow list: if isSignedIn();
+      allow create: if isValidId(projectId) && isValidProject(incoming());
+      allow update: if isValidId(projectId) && isValidProject(incoming());
+      allow delete: if isValidId(projectId) && (isSignedIn() && existing().ownerId == request.auth.uid);
+
+      // Comments subcollection
+      match /comments/{commentId} {
+        allow read: if isValidId(projectId) && isValidId(commentId);
+        allow create: if isValidId(projectId) && isValidId(commentId) && isValidComment(incoming());
+        allow update: if isValidId(projectId) && isValidId(commentId) && isValidComment(incoming());
+        allow delete: if isValidId(projectId) && isValidId(commentId) && isSignedIn();
+      }
+    }
+
+    // Health check collection
+    match /system/{docId} {
+      allow read: if true;
+    }
+  }
+}

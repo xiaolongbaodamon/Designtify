@@ -1,0 +1,6 @@
+{
+  "name": "Designtify - Next-Gen Social Media Graphic Design Studio",
+  "description": "Next-generation graphic design platform just like Canva but better, featuring drag-and-drop vector canvas, extensive templates, AI Magic Studio, real-time collaboration, and one-click multi-platform export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

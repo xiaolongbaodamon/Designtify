@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A social media graphic design canvas project with dimensions, background, and stylized elements",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the project",
+          "maxLength": 128
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the graphic design",
+          "maxLength": 200
+        },
+        "presetId": {
+          "type": "string",
+          "description": "Social media format preset identifier",
+          "maxLength": 64
+        },
+        "width": {
+          "type": "number",
+          "description": "Canvas width in pixels"
+        },
+        "height": {
+          "type": "number",
+          "description": "Canvas height in pixels"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the project creator or owner",
+          "maxLength": 128
+        },
+        "ownerName": {
+          "type": "string",
+          "description": "Display name of the owner",
+          "maxLength": 100
+        },
+        "isPublic": {
+          "type": "boolean",
+          "description": "Whether the project allows shared collaborative access"
+        }
+      },
+      "required": ["id", "title", "width", "height", "ownerId"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Collaborative threaded feedback pin pinned to canvas coordinates",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the comment pin",
+          "maxLength": 128
+        },
+        "x": {
+          "type": "number",
+          "description": "X coordinate percentage or pixel on canvas"
+        },
+        "y": {
+          "type": "number",
+          "description": "Y coordinate percentage or pixel on canvas"
+        },
+        "text": {
+          "type": "string",
+          "description": "Feedback comment message",
+          "maxLength": 1000
+        },
+        "resolved": {
+          "type": "boolean",
+          "description": "Whether the comment thread is resolved"
+        }
+      },
+      "required": ["id", "x", "y", "text"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": {
+        "$ref": "#/entities/Project"
+      },
+      "description": "Design workspace documents"
+    },
+    "/projects/{projectId}/comments/{commentId}": {
+      "schema": {
+        "$ref": "#/entities/Comment"
+      },
+      "description": "Threaded collaborative canvas feedback comments"
+    }
+  }
+}
